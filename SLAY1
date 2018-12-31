@@ -1,0 +1,61 @@
+// Решение СЛАУ.cpp 
+//
+
+#include "pch.h"
+#include "stdio.h"
+#include "locale"
+#include "math.h"
+
+
+int main()
+{
+	setlocale(LC_ALL, "RUS");
+
+	int lines = 0;  //строчки
+	int column = 0; //столбцы
+	
+	int a = 0, b, c;   // доп херня
+	double x = 0, y, z;   // тоже хрень дополнительная
+
+	printf("Введите кол-во строк \n");
+	scanf_s("%d", &lines);  // Ввод кол-ва строчек
+
+	printf("Введите кол-во столбцов \n");
+	scanf_s("%d", &column); // Ввод кол-ва столбцов
+
+	double** SLAU = (double**)malloc(lines * sizeof(double*)); // Выделение памяти для строк с укозателями
+
+	for (int i = 0; i < lines; i++) // Выделение памяти в каждой строке для столбцов указателей
+	{
+		SLAU[i] = (double*)malloc(lines * sizeof(double));
+	}
+
+	for (int i = 0; i < lines; i++)
+	{
+		printf("\n");
+		for (int j = 0; j < column; j++) 
+		{
+			x++;
+			SLAU[i][j] = x;
+		}
+	}
+
+/*	ВЫВОД заполненной матрицы
+for (int i = 0; i < lines; i++)
+	{
+		printf("\n");
+		for (int j = 0; j < column; j++)
+		{
+			printf("%.2lf  ",SLAU[i][j]);
+		}
+	}
+*/
+
+
+
+
+
+
+
+	return 0;
+}
