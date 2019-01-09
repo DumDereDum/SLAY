@@ -6,6 +6,24 @@
 #include "locale"
 #include "math.h"
 
+//	ПРОПИШИ ЧЕТРОВУ СХОДИМОСТЬ В ОТДЕЛЬНУЮ ФУНКЦИЮ, ТВАРЬ!!!!!!!!!!!!!!
+
+
+// функция для прямого хода
+void dirmove(double **a, int l, int di, double kof)
+{
+	for (int i = di; i < l; i++)
+	{
+		for (int j = 0; j < l+1; j++)
+		{
+			double c, b;
+			c = *(*(a + i) + j);
+			b = *(*(a + i - 1) + j);
+			c = c - b * kof;
+			*(*(a + i) + j) = c;
+		}
+	}
+}
 
 int main()
 {
@@ -13,15 +31,21 @@ int main()
 
 	int lines = 0;  //строчки
 	int column = 0; //столбцы
-	
-	int a = 0, b, c;   // доп херня
+
+	int a = 0, c;   // доп херня
 	double x = 0, y, z;   // тоже хрень дополнительная
+
+
+//	ВВОД МАТРИЦЫ (СЛАУ)
+//-----------------------------------------------------------------------------------------------------------
 
 	printf("Введите кол-во строк \n");
 	scanf_s("%d", &lines);  // Ввод кол-ва строчек
 
 	printf("Введите кол-во столбцов \n");
 	scanf_s("%d", &column); // Ввод кол-ва столбцов
+
+	column++;
 
 	double** SLAU = (double**)malloc(lines * sizeof(double*)); // Выделение памяти для строк с укозателями
 
@@ -33,23 +57,191 @@ int main()
 	for (int i = 0; i < lines; i++)
 	{
 		printf("\n");
-		for (int j = 0; j < column; j++) 
+		for (int j = 0; j < column; j++)
 		{
 			x++;
 			SLAU[i][j] = x;
+			//SLAU[0][0] = 0;
+			SLAU[1][1] = 0;
+			//SLAU[2][2] = 0;
+
 		}
 	}
 
-/*	ВЫВОД заполненной матрицы
-for (int i = 0; i < lines; i++)
+/*				printf("Введите ответы \n");
+				int kostl = 1; // костыль :)
+
+
+				double*ANSW;
+				ANSW = (double*)malloc(lines * sizeof(double));
+
+
+				for (int i = 0; i < lines; i++)
+				{
+					x++;
+					ANSW[i] = x;
+				}
+*/
+//-----------------------------------------------------------------------------------------------------------
+
+
+	//	ВЫВОД заполненной матрицы
+	printf("\n");
+	for (int i = 0; i < lines; i++)
 	{
 		printf("\n");
 		for (int j = 0; j < column; j++)
 		{
-			printf("%.2lf  ",SLAU[i][j]);
+			printf("%.2lf  ", SLAU[i][j]);
+		}
+		//printf("%.2lf  ", ANSW[i]);
+	}  
+	printf("\n");
+
+
+	// Провека сходимости
+	int b = 0;//счeтчик
+	
+	int pcolumn = column-1; //нужен для правильной проверки сходимости
+
+	if (lines > pcolumn) { printf("пиздец, решений нет  ¯\_(ツ)_/¯"); }
+	else if (lines < pcolumn) { printf("решений бесконечное количество  ¯\_(ツ)_/¯"); }
+	else if (lines == pcolumn)
+	{
+		for (int i = 0; i < lines; i++)
+		{
+			//printf("i=%d \n", i);
+			for (int j = 0; j < pcolumn; j++)
+			{
+				//printf("  j=%d \n", j);
+				if ((i == j) && (SLAU[i][j] != 0)) { b++; }
+			}
+		}
+
+		if (b == lines) { printf("система сходится"); }
+		else
+		{
+			int prov = 1; // когда система решаема, prov обнулится
+			int ziroI, noziroI; // переменные запоминающие строчки, которые нужно поменять
+
+			while (prov > 0)
+			{
+				// поиск нулевого элемента на диагонали
+				for (int i = 0; i < lines; i++)
+				{
+					for (int j = 0; j < pcolumn; j++)
+					{
+						if ((SLAU[i][j] == 0) && (i = j)) { ziroI = i; }
+					}
+				}
+			
+				// поиск строчки для замены
+				int noans = 0;
+				for (int i = 0; i < lines; i++) 
+				{
+					for (int j = 0; j < pcolumn; j++)
+					{
+						if ((SLAU[i][j] != 0) && (SLAU[ziroI][j] != 0) && (i = j)) {noziroI = i;}
+						else { noans++; };
+					}
+				}
+
+				// замена
+				for (int j = 0; j < column; j++)
+				{
+					int a;
+					a = SLAU[ziroI][j];
+					SLAU[ziroI][j] = SLAU[noziroI][j];
+					SLAU[noziroI][j] = a;
+				}
+
+				int c = 0;
+				for (int i = 0; i < lines; i++)
+				{
+					for (int j = 0; j < pcolumn; j++)
+					{
+						if ((i == j) && (SLAU[i][j] != 0)) { b++; }
+					}
+				}
+				if (c = lines) { prov--; }
+				else if (noans = lines) { prov = prov - 2; }
+			}
+
+			if (prov == -1) { printf("Решений нет"); }
 		}
 	}
-*/
+
+	//	ВЫВОД заполненной матрицы
+	printf("\n");
+	for (int i = 0; i < lines; i++)
+	{
+		printf("\n");
+		for (int j = 0; j < column; j++)
+		{
+			printf("%.2lf  ", SLAU[i][j]);
+		}
+	}  printf("\n");
+
+
+// ПРЯМОЙ ХОД
+
+	//for (int j; j < column; j++)
+	
+	/*
+		for (int i = 1; i < lines; i++)
+		{
+			
+			//int ki = i++;
+			//double kof = SLAU[i][i - 1] / SLAU[i - 1][i - 1];
+
+			//dirmove(SLAU, lines, i, kof);
+			
+			for (int j = 0; j < column-1; j++)
+			{
+				double kof = SLAU[i][j] / SLAU[j][j];
+
+				dirmove(SLAU, lines, i, kof);
+
+
+				printf("\n i=%d j=%d kof=%lf a1[i][j]=%lf", i,j, kof, SLAU[i][j]);
+				//SLAU[i][j] = SLAU[i][j] - kof * SLAU[i - 1][j];
+				//printf(" a2[i][j]=%lf \n", SLAU[i][j]);
+			}
+			printf("\n");
+		}
+	*/
+
+		for (int j = 0; j < column-1; j++)
+		{
+			for (int i = 0; i < lines; i++)
+			{
+				double kof = SLAU[i][j] / SLAU[j][j];
+
+				dirmove(SLAU, lines, i, kof);
+
+				printf("\n i=%d j=%d kof=%lf a1[i][j]=%lf", i, j, kof, SLAU[i][j]);
+			}
+		}
+
+
+
+
+
+
+	//	ВЫВОД заполненной матрицы
+	printf("\n");
+	for (int i = 0; i < lines; i++)
+	{
+		printf("\n");
+		for (int j = 0; j < column; j++)
+		{
+			printf("%.2lf  ", SLAU[i][j]);
+		}
+	}  printf("\n");
+
+	return 0;
+
+}
 
 
 
