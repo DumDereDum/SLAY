@@ -7,11 +7,24 @@
 #include "stdio.h"
 #include "malloc.h"
 
+// вывод матрицы
+void printSLAU(double **a, int lines, int columns)
+{
+	printf("\n");
+	for (int i = 0; i < lines; i++)
+	{
+		printf("\n");
+		for (int j = 0; j < columns - 1; j++)
+		{
+			printf(" %0.2lf ", (*(a + i) + j));
+		}
+	}
+}
 
 // проверка сходимости
 // если 1 - сходимость есть
 // если 0 - ее нет
-int convergence (double **a, int lines, int columns) 
+int convergence(double **a, int lines, int columns) 
 {
 	int num = 0;
 	for (int i = 0; i < lines; i++)
@@ -58,17 +71,17 @@ void sfts(double **a, int lines, int columns, int *err, int *lin)
 }
 
 // удаление строк
-void dellines(double **a, int lines, int columns, int *lin)
+void dellines(double **a, int *plines, int columns, int *lin)
 {
+	int i = *lin;
+	int lines = *plines;
 
-		for (int j=0;i<columns;j++)
-		{
-			double num;
-			num = *(*(a + i) + j);
-			*(*(a + i) + j) = *(*(a + lines) + j);
+	for (int j=0;j<columns;j++)
+	{
+		*(*(a + i) + j) = *(*(a + lines) + j);
+	}
 
-		}
-
+	*plines--;
 
 }
 
@@ -79,8 +92,13 @@ int main()
 	setlocale(LC_ALL, "RUS");
 
 	int lines = 0;  //строчки
+	int *plines;
+	plines = &lines;
+
 	int columns = 0; //столбцы
-	
+	int *pcolumns;
+	pcolumns = &columns;
+
 //	ВВОД МАТРИЦЫ (СЛАУ)
 //---------------------
 
@@ -115,6 +133,9 @@ int main()
 		}
 	}
 
+	printSLAU(SLAU, lines, columns);
+
+
 	// поиск и удаление одинаковых строк
 	int error = 1; // для ошибок
 	int *err; // указатель на переменную для ошибок
@@ -125,10 +146,11 @@ int main()
 	
 	while (error != 0)
 	{
-		sfts(SLAU, lines, columns, err, lin);
-
+		sfts(SLAU, lines, columns, err, lin); // для поиска спроки
+		dellines(SLAU, plines, columns, lin); // ее удаление
+		sfts(SLAU, lines, columns, err, lin); // "есть ли еквивалентные строчки еще?"
 	}
-
+	printSLAU(SLAU, lines, columns);
 
 	if (lines > columns) { printf("Решений нет"); }
 	else if (lines < columns) { printf("Решений многочисленное кол-во и вскоре разраб все сделает"); }
@@ -137,6 +159,6 @@ int main()
 		// решение
 	}
 
-	
+	printSLAU(SLAU, lines, columns);
 
 }
